@@ -13,34 +13,39 @@ resource "aws_key_pair" "example" {
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-04b4f1a9cf54c11d0"  # Replace with your desired AMI ID
+  ami           = "ami-04b4f1a9cf54c11d0"  # Replace with your desired AMI
   instance_type = "t2.micro"
   key_name      = aws_key_pair.example.key_name
   
   user_data = <<-EOF
     #!/bin/bash
     # Update the package list
-    sudo apt-get update -y
-    
-    # Install Jenkins
-    sudo apt install -y openjdk-17-jre
-    curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
-    echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
-    sudo apt-get update -y
-    sudo apt-get install -y jenkins
-
-    # Start Jenkins
-    sudo systemctl start jenkins
-    sudo systemctl enable jenkins
-
+    sudo apt update -y
+	
     # Install Docker
-    sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    sudo apt-get update -y
-    sudo apt-get install -y docker-ce
-    sudo usermod -aG docker ubuntu
+    sudo apt install -y docker.io
+    
+    sudo systemctl enable docker
+    
+    # Install java
+    sudo apt install -y openjdk-17-jre
+    
+    # Install jenkins
+    sudo curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
+      /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+    echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+      https://pkg.jenkins.io/debian binary/ | sudo tee \
+      /etc/apt/sources.list.d/jenkins.list > /dev/null
+    sudo apt update -y
+    sudo apt install -y jenkins
+    
+    sudo systemctl enable jenkins
+    
+    # Add jenkins and ubuntu users to docker group
     sudo usermod -aG docker jenkins
+    sudo usermod -aG docker ubuntu
+    
+    sudo systemctl restart docker
   EOF
 
   tags = {
@@ -59,4 +64,13 @@ output "public_ip" {
 output "private_key_pem" {
   value     = tls_private_key.example.private_key_pem
   sensitive = true
+}
+
+resource "local_file" "private_key_pem" {
+  content  = tls_private_key.example.private_key_pem
+  filename = "${path.module}/key1.pem"
+}
+
+resource "null_resource" "save_private_key" {
+  depends_on = [local_file.private_key_pem]
 }
