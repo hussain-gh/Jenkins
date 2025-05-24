@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "us-east-1"  # Replace with your desired region
+  # region = "us-east-1"  # Replace with your desired region
+  region = "ap-south-1"
 }
 
 resource "tls_private_key" "example" {
@@ -13,10 +14,11 @@ resource "aws_key_pair" "example" {
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-04b4f1a9cf54c11d0"  # Replace with your desired AMI
+  # ami           = "ami-04b4f1a9cf54c11d0" # Replace with your desired AMI
+  ami           = "ami-0e35ddab05955cf57" 
   instance_type = "t2.micro"
   key_name      = aws_key_pair.example.key_name
-    
+
   tags = {
     Name = "jenkins-master-node"
   }
