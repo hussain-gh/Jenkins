@@ -111,3 +111,8 @@ Example: Reduced build time by implementing parallel stages and caching dependen
 - Store Jenkinsfiles in Git alongside application code.
 - Use tags and branches to track pipeline changes.
 - Implement versioning in artifact storage (e.g., Nexus, Docker Hub).
+
+### 21. What is the version of jenkins or cludbees you worked with?
+
+
+### 22. What were the realtime issues faced in the very recent jenkins experience and how you resolved them?
