@@ -112,7 +112,7 @@ Example: Reduced build time by implementing parallel stages and caching dependen
 - Use tags and branches to track pipeline changes.
 - Implement versioning in artifact storage (e.g., Nexus, Docker Hub).
 
-### 21. What is the version of jenkins or cludbees you worked with?
+### 21. What is the version of jenkins or cloudbees you worked with? What are the key feature of this version versus the prevous versions?
 
 
 ### 22. What were the realtime issues faced in the very recent jenkins experience and how you resolved them?
